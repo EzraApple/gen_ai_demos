@@ -114,7 +114,7 @@ class Trainer:
 
     def load_models(self):
         self.gen.load_state_dict(torch.load("../models/model_state_dicts/mnist_gan/gen.pt"))
-        self.disc.load_state_dict(torch.load("../models/model_state_dicts/mnist_gan/gen.pt"))
+        self.disc.load_state_dict(torch.load("../models/model_state_dicts/mnist_gan/disc.pt"))
 
     def generate(self):
         self.gen.eval()
@@ -128,5 +128,5 @@ class Trainer:
         for i, ax in enumerate(axes.flatten()):
             ax.set_xticks([])
             ax.set_yticks([])
-            ax.imshow(imgs[i])
+            ax.imshow(imgs[i], cmap="gray")
 
