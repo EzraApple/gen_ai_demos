@@ -4,14 +4,14 @@ import matplotlib.pyplot as plt
 
 
 class Generator(nn.Module):
-    def __init__(self, noise_dim, img_dim):
+    def __init__(self, noise_dim, image_dim):
         super().__init__()
         self.generate = nn.Sequential(
             nn.Linear(noise_dim, 256),
             nn.ReLU(),
             nn.Linear(256, 256),
             nn.ReLU(),
-            nn.Linear(256, img_dim),
+            nn.Linear(256, image_dim),
             nn.Tanh()
         )
 
@@ -20,10 +20,10 @@ class Generator(nn.Module):
 
 
 class Discriminator(nn.Module):
-    def __init__(self, img_dim):
+    def __init__(self, image_dim):
         super().__init__()
         self.discriminate = nn.Sequential(
-            nn.Linear(img_dim, 256),
+            nn.Linear(image_dim, 256),
             nn.ReLU(),
             nn.Linear(256, 256),
             nn.ReLU(),
