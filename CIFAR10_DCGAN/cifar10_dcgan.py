@@ -1,7 +1,4 @@
-import torch
-from torch import nn, optim
-import matplotlib.pyplot as plt
-
+from torch import nn
 
 class Generator(nn.Module):
     """
