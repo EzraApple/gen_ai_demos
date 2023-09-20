@@ -13,7 +13,7 @@ class Generator(nn.Module):
             nn.Linear(2 * features, 4 * features),
             nn.ReLU(),
             nn.Linear(4 * features, image_dim),
-            nn.Sigmoid(),
+            nn.Tanh(),
         )
 
     def forward(self, noise):
@@ -37,21 +37,20 @@ class Critic(nn.Module):
     def forward(self, image):
         return self.discriminate(image)
 
-    def gradient_penalty(self, real, fake):
+    def gradient_penalty(self, real, fake, device):
         # mix real and fake, and get criticism
         batch_size = real.shape[0]
-        proportions = torch.rand((batch_size, 1, 1)).expand_as(real)
+        proportions = torch.rand((batch_size, 1)).expand_as(real).to(device)
         mixed = proportions * real + (1 - proportions) * fake
-        criticisms = self.forward(mixed)
+        criticisms = self.discriminate(mixed)
 
         # get gradients
         gradients = torch.autograd.grad(
-            inputs=mixed,
             outputs=criticisms,
+            inputs=mixed,
             grad_outputs=torch.ones_like(criticisms),
             create_graph=True,
-            retain_graph=True
-        )
+        )[0]
 
         # flatten so one row per image
         gradients = gradients.view(len(gradients), -1)
