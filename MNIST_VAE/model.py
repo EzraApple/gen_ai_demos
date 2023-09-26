@@ -2,7 +2,7 @@ import torch
 from torch import nn
 
 
-class VAE(nn.module):
+class VAE(nn.Module):
     def __init__(self, input_dim, hidden_dim, latent_dim, device):
         super().__init__()
 
@@ -15,7 +15,7 @@ class VAE(nn.module):
         )
 
         self.mean = nn.Linear(latent_dim, 2)
-        self.variance = nn.Linear(latent_dim, 2)
+        self.log_variance = nn.Linear(latent_dim, 2)
 
         self.decoder = nn.Sequential(
             nn.Linear(2, latent_dim),
@@ -27,9 +27,9 @@ class VAE(nn.module):
         )
 
     def encode(self, image):
-        latent = self.encode(image)
-        mean, variance = self.mean(latent), self.variance(latent)
-        return mean, variance
+        latent = self.encoder(image)
+        mean, log_variance = self.mean(latent), self.log_variance(latent)
+        return mean, log_variance
 
     def decode(self, sample):
         return self.decoder(sample)
@@ -40,6 +40,6 @@ class VAE(nn.module):
         return sample
 
     def forward(self, image):
-        mean, variance = self.encode(image)
-        sample = self.reparametrize(mean, variance)
-        return self.decode(sample), mean, variance
+        mean, log_variance = self.encode(image)
+        sample = self.reparametrize(mean, (0.5 * log_variance).exp())
+        return self.decode(sample), mean, log_variance
